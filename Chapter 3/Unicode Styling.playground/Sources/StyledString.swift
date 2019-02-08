@@ -4,7 +4,7 @@ public struct StyledString {
     public init() {}
     
     public init(_ value: String, style: Style = .none) {
-        self.append(value, style: .none)
+        self.append(value, style: style)
     }
     
     public mutating func append(_ string: String, style: Style) {
