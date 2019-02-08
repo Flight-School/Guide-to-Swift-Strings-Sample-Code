@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:/Users/mattt/Code/FlightSchool/Guide-to-Strings-Sample-Code/Chapter 6/AFTN/AFTN.playground">
+   </FileRef>
+   <FileRef
+      location = "group:AFTN.xcodeproj">
+   </FileRef>
+</Workspace>
