@@ -1,7 +1,15 @@
 {
   "object": {
     "pins": [
-
+      {
+        "package": "Antlr4",
+        "repositoryURL": "https://github.com/Flight-School/SwiftAntlr4.git",
+        "state": {
+          "branch": "master",
+          "revision": "c95f13a074091c6b7df6b5f3d13246398ae195ef",
+          "version": null
+        }
+      }
     ]
   },
   "version": 1

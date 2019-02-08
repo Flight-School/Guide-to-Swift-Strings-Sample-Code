@@ -7,7 +7,7 @@ let package = Package(
     name: "AFTN",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(path: "../Antlr4")
+        .package(url: "https://github.com/Flight-School/SwiftAntlr4.git", .branch("master"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
