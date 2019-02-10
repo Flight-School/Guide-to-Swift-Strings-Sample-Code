@@ -4,12 +4,12 @@
 // https://swift.org/download/#snapshots
 //------------------------------------------------------------------------------
 
-func unemojify<T>(_ string: T) -> String where T: StringProtocol {
+func filterNonEmoji<T>(from string: T) -> String where T: StringProtocol {
     return String(string.filter { character in
-        return character.unicodeScalars.allSatisfy { unicodeScalar in
-            return unicodeScalar.properties.isEmoji
+        character.unicodeScalars.allSatisfy { unicodeScalar in
+            unicodeScalar.properties.isEmoji
         }
     })
 }
 
-unemojify("EMOJI 👏 MAKES 👏 EVERY 👏 STRING 👏 BETTER 👏")
+filterNonEmoji(from: "EMOJI 👏 MAKE 👏 STRINGS 👏 BETTER 👏")
