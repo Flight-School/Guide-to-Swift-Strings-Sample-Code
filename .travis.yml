@@ -1,0 +1,76 @@
+language: swift
+osx_image: xcode10.2
+env:
+  global:
+    - SDK=iphoneos
+    - TARGET=armv7-apple-ios12
+  matrix:
+    - PLAYGROUND_DIR="Chapter 2/Canonical Equivalence.playground"
+    - PLAYGROUND_DIR="Chapter 2/Character Number Values.playground"
+    - PLAYGROUND_DIR="Chapter 2/Emoji Detection.playground"
+    - PLAYGROUND_DIR="Chapter 2/String Indexes.playground"
+    - PLAYGROUND_DIR="Chapter 2/String Literals.playground"
+    - PLAYGROUND_DIR="Chapter 2/Unicode Views.playground"
+    - PLAYGROUND_DIR="Chapter 3/Booking Class.playground"
+    - PLAYGROUND_DIR="Chapter 3/Flight Code.playground"
+    - PLAYGROUND_DIR="Chapter 3/StderrOutputStream.playground"
+    - PLAYGROUND_DIR="Chapter 3/String as BidirectionalCollection.playground"
+    - PLAYGROUND_DIR="Chapter 3/String as Collection.playground"
+    - PLAYGROUND_DIR="Chapter 3/String as RangeReplaceableCollection.playground"
+    - PLAYGROUND_DIR="Chapter 3/String as Sequence.playground"
+    - PLAYGROUND_DIR="Chapter 3/String as StringProtocol.playground"
+    - PLAYGROUND_DIR="Chapter 3/Unicode Logger.playground"
+    - PLAYGROUND_DIR="Chapter 3/Unicode Styling.playground"
+    - PLAYGROUND_DIR="Chapter 4/Locale Delimiters.playground"
+    - PLAYGROUND_DIR="Chapter 4/Localized Case Mapping.playground"
+    - PLAYGROUND_DIR="Chapter 4/Localized Comparison.playground"
+    - PLAYGROUND_DIR="Chapter 4/Localized Searching.playground"
+    - PLAYGROUND_DIR="Chapter 4/Normalization Forms.playground"
+    - PLAYGROUND_DIR="Chapter 4/Numeric String Sorting.playground"
+    - PLAYGROUND_DIR="Chapter 4/Range Conversion.playground"
+    - PLAYGROUND_DIR="Chapter 4/String Encoding Conversion.playground"
+    - PLAYGROUND_DIR="Chapter 4/String Format.playground"
+    - PLAYGROUND_DIR="Chapter 4/String Transformation.playground"
+    - PLAYGROUND_DIR="Chapter 4/String from Data.playground"
+    - PLAYGROUND_DIR="Chapter 4/Trimming.playground"
+    - PLAYGROUND_DIR="Chapter 4/URL Encoding.playground"
+    - PLAYGROUND_DIR="Chapter 5/Base16.playground"
+    - PLAYGROUND_DIR="Chapter 5/Base2.playground"
+    - PLAYGROUND_DIR="Chapter 5/Base64.playground"
+    - PLAYGROUND_DIR="Chapter 5/BaseEmojiPerson.playground"
+    - PLAYGROUND_DIR="Chapter 5/HumanReadable.playground"
+    - PLAYGROUND_DIR="Chapter 6/AFTN Regular Expression.playground"
+    - PLAYGROUND_DIR="Chapter 6/AFTN Scanner.playground"
+    - PLAYGROUND_DIR="Chapter 6/AFTN/AFTN.playground"
+    - PLAYGROUND_DIR="Chapter 7/Keyword Extraction.playground"
+    - PLAYGROUND_DIR="Chapter 7/Language Recognizer Hints.playground"
+    - PLAYGROUND_DIR="Chapter 7/Language Recognizer.playground"
+    - PLAYGROUND_DIR="Chapter 7/Language Tagging.playground"
+    - PLAYGROUND_DIR="Chapter 7/Lemmatization.playground"
+    - PLAYGROUND_DIR="Chapter 7/Levenshtein Distance.playground"
+    - PLAYGROUND_DIR="Chapter 7/Markov Chain.playground"
+    - PLAYGROUND_DIR="Chapter 7/NGrams.playground"
+    - PLAYGROUND_DIR="Chapter 7/Naive Bayes Classifier.playground"
+    - PLAYGROUND_DIR="Chapter 7/Named Entity Recognition.playground"
+    - PLAYGROUND_DIR="Chapter 7/Part of Speech Tagging.playground"
+    - PLAYGROUND_DIR="Chapter 7/Sentiment Classification.playground"
+    - PLAYGROUND_DIR="Chapter 7/Sentiment Classifier Model Trainer.playground"
+    - PLAYGROUND_DIR="Chapter 7/Soundex.playground"
+    - PLAYGROUND_DIR="Chapter 7/Spell Checker.playground"
+    - PLAYGROUND_DIR="Chapter 7/Tokenization.playground"
+script: >-
+  xcrun swift --version &&
+  cd "${PLAYGROUND_DIR}" &&
+  xcrun -sdk "${SDK}"
+    swiftc -target "${TARGET}"
+      -emit-library -emit-module -module-name AuxiliarySources
+      Sources/*.swift &&
+  if ! xcrun swiftc -emit-imported-modules Contents.swift |
+    grep -q "PlaygroundSupport";
+  then
+    cat <(echo "import AuxiliarySources") Contents.swift > main.swift &&
+    xcrun -sdk "${SDK}"
+    swiftc -target "${TARGET}"
+      -I "." -L "." -lAuxiliarySources -module-link-name AuxiliarySources
+      -o Playground main.swift;
+  fi
