@@ -58,19 +58,20 @@ env:
     - PLAYGROUND_DIR="Chapter 7/Soundex.playground"
     - PLAYGROUND_DIR="Chapter 7/Spell Checker.playground"
     - PLAYGROUND_DIR="Chapter 7/Tokenization.playground"
-script: >-
+script:
   xcrun swift --version &&
   cd "${PLAYGROUND_DIR}" &&
+  mkdir -p Sources && touch Sources/main.swift &&
   xcrun -sdk "${SDK}"
     swiftc -target "${TARGET}"
-      -emit-library -emit-module -module-name AuxiliarySources
-      Sources/*.swift &&
+           -emit-library -emit-module -module-name AuxiliarySources
+           Sources/*.swift &&
   if ! xcrun swiftc -emit-imported-modules Contents.swift |
-    grep -q "PlaygroundSupport";
+        grep -q "PlaygroundSupport";
   then
     cat <(echo "import AuxiliarySources") Contents.swift > main.swift &&
     xcrun -sdk "${SDK}"
-    swiftc -target "${TARGET}"
-      -I "." -L "." -lAuxiliarySources -module-link-name AuxiliarySources
-      -o Playground main.swift;
+      swiftc -target "${TARGET}"
+        -I "." -L "." -lAuxiliarySources -module-link-name AuxiliarySources
+        -o Playground main.swift;
   fi
