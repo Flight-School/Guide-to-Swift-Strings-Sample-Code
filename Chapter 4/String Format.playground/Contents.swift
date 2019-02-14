@@ -82,7 +82,7 @@ String(format: "%C", 0x3042)
 String(format: "%@", "Hello")
 
 // %% - Percent sign
-String(format: "%d%%", 100) // "100%"
+String(format: "%d%%", 100)
 
 
 // ================
