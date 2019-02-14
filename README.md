@@ -25,7 +25,7 @@ This repository contains sample code used in the
 ### String Literals
 
 You can construct string values in Swift using string literals.
-This playground has examples of each variety,
+This Playground has examples of each variety,
 from the conventional, single-line to the raw, multi-line.
 
 ```swift
@@ -50,7 +50,7 @@ Swift strings have opaque index types.
 One consequence of this is that
 you can't access character by integer position directly,
 as you might in other languages.
-This playground shows various strategies for
+This Playground shows various strategies for
 working with string indices and ranges.
 
 ```swift
@@ -82,7 +82,7 @@ precomposed.unicodeScalars.elementsEqual(decomposed.unicodeScalars) // false
 
 Swift `String` values
 provide views to their UTF-8, UTF-16, and UTF-32 code units.
-This playground shows the correspondence between
+This Playground shows the correspondence between
 the characters in a string and their various encoding forms.
 
 ```swift
@@ -180,7 +180,7 @@ print("Error!", to: &standardError)
 
 Swift allows any type that conforms to `ExpressibleByStringLiteral`
 to be initialized from a string literal.
-This playground provides a simple example through the `BookingClass` type.
+This Playground provides a simple example through the `BookingClass` type.
 
 ```swift
 ("J" as BookingClass) // Business Class
@@ -190,7 +190,7 @@ This playground provides a simple example through the `BookingClass` type.
 
 Types conforming to the `LosslessStringConvertible` protocol
 can be initialized directly from `String` values.
-This playground shows a `FlightCode` type that is adopts both
+This Playground shows a `FlightCode` type that is adopts both
 the `LosslessStringConvertible` and `ExpressibleByStringLiteral` protocols.
 
 ```swift
@@ -230,7 +230,7 @@ or have `NSString` return values
 are imported by Swift to use `String` values instead.
 However, some of these APIs still specify ranges using the `NSRange` type
 instead of `Range<String.Index>`.
-This playground demonstrates how to convert back and forth
+This Playground demonstrates how to convert back and forth
 between the two range types.
 
 ```swift
@@ -265,7 +265,7 @@ import Foundation
 Another consideration for localized string sorting is how to handle numbers.
 By default, strings sort digits lexicographically;
 7 follows 3, but 7 also follows 36.
-This playground demonstrates proper use of the
+This Playground demonstrates proper use of the
 `localizedStandardCompare` comparator,
 which is what Finder uses to sort filenames.
 
@@ -388,7 +388,7 @@ import Foundation
 
 When you import the Foundation framework,
 `String` gets `sprintf`-style initializers.
-This playground serves as an exhaustive reference
+This Playground serves as an exhaustive reference
 for all of the available
 formatting specifiers, modifiers, flags, and arguments.
 
