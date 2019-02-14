@@ -17,6 +17,7 @@ This repository contains sample code used in the
 - [Chapter 3: Swift String Protocols and Supporting Types](#chapter-3)
 - [Chapter 4: Working with Foundation String APIs](#chapter-4)
 - [Chapter 5: Binary-to-Text Encoding](#chapter-5)
+- [Chapter 6: Parsing Data From Text](#chapter-6)
 
 ---
 
@@ -456,6 +457,79 @@ let data = Data(bytes: [0xB2, 0x03, 0xE2, 0x8F,
 
 data.humanReadableEncodedString()
 // "LONG IVY JULY AJAR BOND LEE"
+```
+
+## Chapter 6
+
+### Parsing with Scanner
+
+One of Foundation's many offerings is the `Scanner` class:
+a sort of lexer/parser combo deal with some convenient features.
+This Playground demonstrates how to make it even more convenient in Swift,
+and how to use it to parse information from an AFTN message.
+
+```swift
+import Foundation
+
+let scanner = Scanner(string: string)
+scanner.charactersToBeSkipped = .whitespacesAndNewlines
+
+try scanner.scan("ZCZC")
+let transmission = try scanner.scan(.alphanumerics)
+let additionalServices = try scanner.scan(.decimalDigits)
+let priority = try scanner.scan(.uppercaseLetters)
+let destination = try scanner.scan(.uppercaseLetters)
+let time = try scanner.scan(.decimalDigits)
+let origin = try scanner.scan(.uppercaseLetters)
+let text = try scanner.scan(upTo: "NNNN")
+```
+
+### Parsing with Regular Expressions
+
+Foundation's `NSRegularExpression` offers the closest thing to
+built-in regex support in Swift.
+Underneath the hood, it wraps the
+[ICU regular expression engine](http://userguide.icu-project.org/strings/regexp);
+we take advantage of a bunch of its advanced features in this Playground
+to parse the same message as before using a different approach.
+
+```swift
+import Foundation
+
+let pattern = #"""
+(?x-i)
+\A
+ZCZC \h
+(?<transmission>[A-Z]{3}[0-9]{3}) \h (?<additionalService>[0-9]{0,8}) \n
+(?<priority>[A-Z]{2}) \h (?<destination>[A-Z]{8}) \n
+(?<time>[0-9]{6}) \h (?<origin>[A-Z]{8}) \n+
+(?<text>[[A-Z][0-9]\h\n]+) \s*
+NNNN
+\Z
+"""#
+
+let regex = try NSRegularExpression(pattern: pattern,
+                                    options: [])
+```
+
+### Parsing with ANTLR4
+
+[ANTLR](https://www.antlr.org) is a parser generator
+with support for Swift code generation.
+This example provides a working integration between ANTLR4
+and the Swift Package Manager to demonstrate yet another approach
+to parsing the same AFTN message from the previous examples.
+
+```swift
+import AFTN
+
+let message = try Message(string)!
+message.priority
+message.destination.location
+message.destination.organization
+message.destination.department
+message.filingTime
+message.text
 ```
 
 ---
