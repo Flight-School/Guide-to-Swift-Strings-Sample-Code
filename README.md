@@ -16,6 +16,7 @@ This repository contains sample code used in the
 - [Chapter 2: Working with Strings in Swift](#chapter-2)
 - [Chapter 3: Swift String Protocols and Supporting Types](#chapter-3)
 - [Chapter 4: Working with Foundation String APIs](#chapter-4)
+- [Chapter 5: Binary-to-Text Encoding](#chapter-5)
 
 ---
 
@@ -395,6 +396,66 @@ formatting specifiers, modifiers, flags, and arguments.
 import Foundation
 
 String(format: "%X", 127) // "7F"
+```
+
+## Chapter 5
+
+### Base2 and Base16 Encoding
+
+These examples show you how to
+use the `String(_:radix:uppercase:)` initializer to
+produce binary and hexadecimal representations of binary integer values.
+
+```swift
+let byte: UInt8 = 0xF0
+
+String(byte, radix: 2) // "11110000"
+String(byte, radix: 16, uppercase: true) // "F0"
+```
+
+### Base64 Encoding
+
+Foundation provides APIs for base64 encoding and decoding data,
+which are demonstrated in this Playground.
+
+```swift
+import Foundation
+
+let string = "Hello!"
+
+let data = string.data(using: .utf8)!
+let encodedString = data.base64EncodedString() // "SGVsbG8h"
+```
+
+### Base🧑 Encoding
+
+Anticipating emoji's role in the forthcoming collapse of human communication,
+we present a novel binary-to-text encoding format
+that represents data using human face emoji
+combined with skin tone and hair style modifiers.
+
+```swift
+let data = "Fly".data(using: .utf8)!
+let encodedString = data.base🧑EncodedString() // "👨🏽‍🦱👩🏻‍🦲👩🏽‍🦳👩🏿‍🦱"
+```
+
+### Human Readable Encoding
+
+In this example,
+we implement the 11-bit binary-to-text encoding described in
+[RFC 1751](https://tools.ietf.org/html/rfc1751):
+"A Convention for Human-Readable 128-bit Keys".
+_"Why?"_ you ask?
+_Why indeed!_
+
+```swift
+import Foundation
+
+let data = Data(bytes: [0xB2, 0x03, 0xE2, 0x8F,
+                        0xA5, 0x25, 0xBE, 0x47])
+
+data.humanReadableEncodedString()
+// "LONG IVY JULY AJAR BOND LEE"
 ```
 
 ---
