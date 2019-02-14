@@ -15,6 +15,7 @@ This repository contains sample code used in the
 
 - [Chapter 2: Working with Strings in Swift](#chapter-2)
 - [Chapter 3: Swift String Protocols and Supporting Types](#chapter-3)
+- [Chapter 4: Working with Foundation String APIs](#chapter-4)
 
 ---
 
@@ -217,6 +218,183 @@ Hello, \(name, style: .fraktur(bold: true))!
 """
 
 print(styled)
+```
+
+## Chapter 4
+
+### Range Conversion
+
+Objective-C APIs that take `NSString` parameters
+or have `NSString` return values
+are imported by Swift to use `String` values instead.
+However, some of these APIs still specify ranges using the `NSRange` type
+instead of `Range<String.Index>`.
+This playground demonstrates how to convert back and forth
+between the two range types.
+
+```swift
+import Foundation
+
+let string = "Hello, world!"
+let nsRange = NSRange(string.startIndex..<string.endIndex, in: string)
+let range = Range(nsRange, in: string)
+```
+
+### Localized String Operations
+
+Foundation augments the Swift `String` type
+by providing localized string operations,
+including
+case mapping,
+searching,
+and comparison.
+Be sure to use localized string operations
+(ideally the `standard` variant, if applicable)
+when working with text written or read by users.
+
+```swift
+import Foundation
+
+"Éclair".contains("E") // false
+"Éclair".localizedStandardContains("E") // true
+```
+
+### Numeric String Sorting
+
+Another consideration for localized string sorting is how to handle numbers.
+By default, strings sort digits lexicographically;
+7 follows 3, but 7 also follows 36.
+This playground demonstrates proper use of the
+`localizedStandardCompare` comparator,
+which is what Finder uses to sort filenames.
+
+```swift
+import Foundation
+
+let files: [String] = [
+    "File 3.txt",
+    "File 7.txt",
+    "File 36.txt"
+]
+
+let order: ComparisonResult = .orderedAscending
+
+files.sorted { lhs, rhs in
+    lhs.localizedStandardCompare(rhs) == order
+}
+// ["File 3.txt", "File 7.txt", "File 36.txt"]
+```
+
+### Normalization Forms
+
+Foundation provides APIs for accessing normalization forms for strings,
+including NFC and NFD,
+as demonstrated in this example.
+
+```swift
+import Foundation
+
+let string = "ümlaut"
+
+let nfc = string.precomposedStringWithCanonicalMapping
+nfc.unicodeScalars.first
+
+let nfd = string.decomposedStringWithCanonicalMapping
+nfd.unicodeScalars.first
+```
+
+### String Encoding Conversion
+
+Foundation offers support for many different legacy string encodings,
+as shown in this example.
+
+```swift
+import Foundation
+
+"Hello, Macintosh!".data(using: .macOSRoman)
+```
+
+### String from Data
+
+Foundation provides APIs to read and write `String` values
+from data values and files.
+
+```swift
+import Foundation
+
+let url = Bundle.main.url(forResource: "file", withExtension: "txt")!
+try String(contentsOf: url) // "Hello!"
+
+let data = try Data(contentsOf: url)
+String(data: data, encoding: .utf8) // "Hello!"
+```
+
+### String Transformation
+
+Another cool bit of functionality `String` inherits from `NSString`
+is the ability to apply
+[ICU string transforms](http://userguide.icu-project.org/transforms/general),
+as seen in this example.
+
+```swift
+import Foundation
+
+"Avión".applyingTransform(.stripDiacritics, reverse: false)
+// "Avion"
+
+"©".applyingTransform(.toXMLHex, reverse: false)
+// "&#xA9;"
+
+"🛂".applyingTransform(.toUnicodeName, reverse: false)
+// "\\N{PASSPORT CONTROL}"
+
+"マット".applyingTransform(.fullwidthToHalfwidth, reverse: false)
+// "ﾏｯﾄ"
+```
+
+### Trimming
+
+Foundation's `CharacterSet` is used in various string APIs,
+but it's perhaps most well-known for its role in the
+`trimmingCharacters(in:)` method,
+as shown in this Playground.
+
+```swift
+import Foundation
+
+"""
+
+            ✈️
+
+""".trimmingCharacters(in: .whitespacesAndNewlines) // "✈️"
+```
+
+### URL Encoding
+
+Only certain characters are allowed in certain positions of a URLs.
+By importing Foundation,
+you can encode URL query parameters with confidence
+with the `addingPercentEncoding(withAllowedCharacters:)` method.
+
+```swift
+import Foundation
+
+"q=lax to jfk".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+// q=lax%20to%20jfk
+```
+
+### String Format
+
+When you import the Foundation framework,
+`String` gets `sprintf`-style initializers.
+This playground serves as an exhaustive reference
+for all of the available
+formatting specifiers, modifiers, flags, and arguments.
+
+```swift
+import Foundation
+
+String(format: "%X", 127) // "7F"
 ```
 
 ---
