@@ -14,6 +14,7 @@ This repository contains sample code used in the
 ---
 
 - [Chapter 2: Working with Strings in Swift](#chapter-2)
+- [Chapter 3: Swift String Protocols and Supporting Types](#chapter-3)
 
 ---
 
@@ -115,6 +116,107 @@ well, exactly what you'd expect it to do.
 
 ```swift
 ("👏" as Unicode.Scalar).properties.isEmoji // true
+```
+
+## Chapter 3
+
+### String as **\*\***\_\_\_**\*\***
+
+In Swift,
+`String` functionality is inherited from
+a complex hierarchy of interrelated protocols,
+including
+`Sequence`,
+`Collection`,
+`BidirectionalCollection`,
+`RangeReplaceableCollection`,
+`StringProtocol`,
+and others.
+
+Each of the protocols mentioned have their own Playground
+demonstrating the specific functionality they provide.
+
+```swift
+"Boeing 737-800".filter { $0.isCased }
+                .map { $0.uppercased() }
+["B", "O", "E", "I", "N", "G"]
+```
+
+### Unicode Logger
+
+The `print` function can direct its output
+to a custom type conforming to the `TextOutputStream` protocol.
+This example implements a logger
+that prints the Unicode code points of the provided string.
+
+```swift
+var logger = UnicodeLogger()
+print("👨‍👩‍👧‍👧", to: &logger)
+
+// 0: 👨 U+1F468	MAN
+// 1: ‍ U+200D	ZERO WIDTH JOINER
+// 2: 👩 U+1F469	WOMAN
+// 3: ‍ U+200D	ZERO WIDTH JOINER
+// 4: 👧 U+1F467	GIRL
+// 5: ‍ U+200D	ZERO WIDTH JOINER
+// 6: 👧 U+1F467	GIRL
+```
+
+### Stderr Output Stream
+
+Text output streams can also be used to
+direct print statements from the default `stdout` destination.
+In this example,
+the `print` function is directed to write to `stderr`.
+
+```swift
+var standardError = StderrOutputStream()
+print("Error!", to: &standardError)
+```
+
+### Booking Class
+
+Swift allows any type that conforms to `ExpressibleByStringLiteral`
+to be initialized from a string literal.
+This playground provides a simple example through the `BookingClass` type.
+
+```swift
+("J" as BookingClass) // Business Class
+```
+
+### Flight Code
+
+Types conforming to the `LosslessStringConvertible` protocol
+can be initialized directly from `String` values.
+This playground shows a `FlightCode` type that is adopts both
+the `LosslessStringConvertible` and `ExpressibleByStringLiteral` protocols.
+
+```swift
+let flight: FlightCode = "AA 1"
+
+flight.airlineCode
+flight.flightNumber
+
+FlightCode(String(flight))
+```
+
+### Unicode Styling
+
+Swift 5 makes it possible to customize
+the behavior of interpolation in string literals
+by way of the `ExpressibleByStringInterpolation` protocol.
+To demonstrate this,
+we implement a `StyledString` type that
+allows interpolation segments to specify a style,
+such as **bold**, _italic_, and 𝔣𝔯𝔞𝔨𝔱𝔲𝔯.
+
+```swift
+let name = "Johnny"
+let styled: StyledString = """
+Hello, \(name, style: .fraktur(bold: true))!
+"""
+
+print(styled)
 ```
 
 ---
