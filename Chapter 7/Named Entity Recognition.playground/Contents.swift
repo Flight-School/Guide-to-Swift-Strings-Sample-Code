@@ -1,7 +1,7 @@
 import NaturalLanguage
 
 let string = """
-   Fang Liu of China is the current Secretary General of ICAO.
+Fang Liu of China is the current Secretary General of ICAO.
 """
 
 let tagger = NLTagger(tagSchemes: [.nameType])
@@ -17,6 +17,6 @@ tagger.enumerateTags(in: stringRange,
     if let nameType = tag?.rawValue, tag != .otherWord {
         print("\(string[tagRange]): \(nameType)")
     }
-        
+
     return true // continue processing
 }
