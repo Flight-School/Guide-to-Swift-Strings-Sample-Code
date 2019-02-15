@@ -137,7 +137,7 @@ including
 `StringProtocol`,
 and others.
 
-Each of the protocols mentioned have their own Playground
+Each of the protocols mentioned has their own Playground
 demonstrating the specific functionality they provide.
 
 ```swift
@@ -192,7 +192,7 @@ This Playground provides a simple example through the `BookingClass` type.
 
 Types conforming to the `LosslessStringConvertible` protocol
 can be initialized directly from `String` values.
-This Playground shows a `FlightCode` type that is adopts both
+This Playground shows a `FlightCode` type that adopts both
 the `LosslessStringConvertible` and `ExpressibleByStringLiteral` protocols.
 
 ```swift
@@ -252,7 +252,7 @@ case mapping,
 searching,
 and comparison.
 Be sure to use localized string operations
-(ideally the `standard` variant, if applicable)
+(ideally, the `standard` variant, if applicable)
 when working with text written or read by users.
 
 ```swift
@@ -517,7 +517,7 @@ let regex = try NSRegularExpression(pattern: pattern,
 
 [ANTLR](https://www.antlr.org) is a parser generator
 with support for Swift code generation.
-This example provides a working integration between ANTLR4
+This example provides a functional integration between ANTLR4
 and the Swift Package Manager to demonstrate yet another approach
 to parsing the same AFTN message from the previous examples.
 
