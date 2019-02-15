@@ -18,6 +18,7 @@ This repository contains sample code used in the
 - [Chapter 4: Working with Foundation String APIs](#chapter-4)
 - [Chapter 5: Binary-to-Text Encoding](#chapter-5)
 - [Chapter 6: Parsing Data From Text](#chapter-6)
+- [Chapter 7: Natural Language Processing](#chapter-7)
 
 ---
 
@@ -532,6 +533,376 @@ message.filingTime
 message.text
 ```
 
+## Chapter 7
+
+### Tokenization
+
+The NaturalLanguage framework's `NLTokenizer` class
+can tokenize text by word, sentence, and paragraph,
+as demonstrated in this example.
+
+```swift
+import NaturalLanguage
+
+let string = "Welcome to New York, where the local time is 9:41 AM."
+let tokenizer = NLTokenizer(unit: .word)
+tokenizer.string = string
+
+let stringRange = string.startIndex..<string.endIndex
+tokenizer.enumerateTokens(in: stringRange) { (tokenRange, _) in
+    let token = string[tokenRange]
+    print(token, terminator: "\t")
+    return true // continue processing
+}
+// Prints: "Welcome	to	New	York	where	the	local	time	is	9	41	AM	"
+```
+
+### Language Tagging
+
+You can use the `NLTagger` class to detect the language and script
+for a piece of natural language text,
+as seen in this Playground.
+
+```swift
+import NaturalLanguage
+
+let string = """
+Sehr geehrte Damen und Herren,
+herzlich willkommen in Frankfurt.
+"""
+
+let tagSchemes: [NLTagScheme] = [.language, .script]
+let tagger = NLTagger(tagSchemes: tagSchemes)
+tagger.string = string
+
+for scheme in tagSchemes {
+    if case let (tag?, _) = tagger.tag(at: string.startIndex,
+                                       unit: .word,
+                                       scheme: scheme) {
+        print(scheme.rawValue, tag.rawValue)
+    }
+}
+// Prints:
+// "Language de"
+// "Script Latn"
+```
+
+### Part of Speech Tagging
+
+To tag part of speech for words (noun, verb, etc.)
+use the `NLTagger` class with the `.lexicalClass` tag scheme.
+
+```swift
+import NaturalLanguage
+
+let string = "The sleek white jet soars over the hazy fog."
+
+let tagger = NLTagger(tagSchemes: [.lexicalClass])
+tagger.string = string
+
+let stringRange = string.startIndex..<string.endIndex
+
+let options: NLTagger.Options = [.omitWhitespace, .omitPunctuation]
+tagger.enumerateTags(in: stringRange,
+                     unit: .word,
+                     scheme: .lexicalClass,
+                     options: options) { (tag, tagRange) in
+    if let partOfSpeech = tag?.rawValue {
+        print("\(string[tagRange]): \(partOfSpeech)")
+    }
+
+    return true // continue processing
+}
+// Prints:
+// "The: Determiner"
+// "sleek: Adjective"
+// "white: Adjective"
+// "jet: Noun"
+// ...
+```
+
+### Named Entity Recognition
+
+`NLTagger` can also be used to detect named entities,
+including people, places, and organizations.
+This example shows how to do just that.
+
+```swift
+import NaturalLanguage
+
+let string = """
+Fang Liu of China is the current Secretary General of ICAO.
+"""
+
+let tagger = NLTagger(tagSchemes: [.nameType])
+tagger.string = string
+
+let stringRange = string.startIndex..<string.endIndex
+
+let options: NLTagger.Options = [.omitWhitespace, .omitPunctuation, .joinNames]
+tagger.enumerateTags(in: stringRange,
+                     unit: .word,
+                     scheme: .nameType,
+                     options: options) { (tag, tagRange) in
+    if let nameType = tag?.rawValue, tag != .otherWord {
+        print("\(string[tagRange]): \(nameType)")
+    }
+
+    return true // continue processing
+}
+// Prints:
+// "Fang Liu: PersonalName"
+// "China: PlaceName"
+// "ICAO: OrganizationName"
+```
+
+### Keyword Extraction
+
+Short of implementing a more complete natural language parser,
+you can use `NLTagger` to extract keywords by part of speech
+as a first approximation for interpreting commands.
+
+```swift
+import NaturalLanguage
+
+let string = "What's the current temperature in Tokyo?"
+
+let tagger = NLTagger(tagSchemes: [.nameTypeOrLexicalClass])
+tagger.string = string
+
+var taggedKeywords: [(NLTag, String)] = []
+
+let stringRange = string.startIndex..<string.endIndex
+let options: NLTagger.Options = [.omitWhitespace,
+                                 .omitPunctuation,
+                                 .joinNames]
+tagger.enumerateTags(in: stringRange,
+                     unit: .word,
+                     scheme: .nameTypeOrLexicalClass,
+                     options: options) { (tag, tagRange) in
+    guard let tag = tag else { return true }
+    switch tag {
+    case .noun, .placeName:
+        print(tag.rawValue, String(string[tagRange]))
+    default:
+        break
+    }
+
+    return true // continue processing
+}
+// Prints:
+// "Noun temperature"
+// "PlaceName Tokyo"
+```
+
+### Lemmatization
+
+This example demonstrates the `.lemma` tag scheme
+and how it resolves conjugations of various words.
+
+```swift
+import NaturalLanguage
+
+let string = """
+Flying flights fly flyers flown.
+"""
+
+let tagger = NLTagger(tagSchemes: [.lemma])
+tagger.string = string
+
+tagger.enumerateTags(in: string.startIndex..<string.endIndex,
+                     unit: .word,
+                     scheme: .lemma,
+                     options: []) { (tag, tagRange) in
+    if let lemma = tag?.rawValue {
+        print("\(string[tagRange]): \(lemma)")
+    }
+
+    return true // continue processing
+}
+// Prints:
+// "Flying: fly"
+// "flights: flight"
+// "fly: fly"
+// "flyers: flyer"
+// "flown: fly"
+```
+
+### Language Recognizer
+
+The `NLLanguageRecognizer` provides a configurable classifier
+for determining the language used in a piece of text.
+Here, we demonstrate how to use the `languageHints` property
+to resolve a sentence that could be understood in either
+Norwegian Bokmål (`nb`) or Danish (`da`).
+
+```swift
+import NaturalLanguage
+
+let string = """
+God morgen mine damer og herrer.
+"""
+
+let languageRecognizer = NLLanguageRecognizer()
+languageRecognizer.processString(string)
+
+languageRecognizer.dominantLanguage // da
+
+languageRecognizer.languageHints = [.norwegian: 0.75,
+                                    .swedish: 0.25]
+
+languageRecognizer.dominantLanguage // nb
+```
+
+### Naive Bayes Classifier
+
+This example provides a reference implementation for a
+Naive Bayes "bag of words" classifier in Swift.
+
+```swift
+enum Sentiment: String, Hashable {
+    case positive, negative
+}
+
+let classifier = NaiveBayesClassifier<Sentiment, String>()
+classifier.trainText("great flight", for: .positive)
+classifier.trainText("flight was late and turbulent", for: .negative)
+
+classifier.classifyText("I had a great flight") // positive
+```
+
+### Sentiment Classification
+
+Using Create ML, we can build a Core ML classifier model
+that can be used by the Natural Language framework
+to determine if a piece of natural language text expresses
+positive, negative, or neutral sentiment.
+
+```swift
+import NaturalLanguage
+
+let url = Bundle.main.url(forResource: "SentimentClassifier",
+                          withExtension: "mlmodelc")!
+let model = try NLModel(contentsOf: url)
+
+model.predictedLabel(for: "Nice, smooth flight") // positive
+```
+
+### N-Grams
+
+This Playground provides a Swift implementation of n-grams,
+which, combined with `NLTokenizer`,
+can produce bigrams and trigrams of words in a piece of natural language text.
+
+```swift
+import NaturalLanguage
+
+let string = """
+Please direct your attention to flight attendants
+as we review the safety features of this aircraft.
+"""
+
+let tokenizer = NLTokenizer(unit: .word)
+tokenizer.string = string
+let words = tokenizer.tokens(for: string.startIndex..<string.endIndex)
+                     .map { String(string[$0]) }
+bigrams(words)
+// [("Please", "direct"), ("direct", "your"), ...]
+```
+
+### Markov Chain
+
+Using n-grams to determine the conditional probability of
+transitions from one word to another,
+we can construct a model that randomly generates text
+that trivially resembles the provided source.
+In this example,
+we feed in a corpus of Air Traffic Control transcripts.
+
+```swift
+import Foundation
+import NaturalLanguage
+
+// https://catalog.ldc.upenn.edu/LDC94S14A
+let url = Bundle.main.url(forResource: "LDC94S14A-sample",
+                          withExtension: "txt")!
+let text = try String(contentsOf: url)
+var markovChain = MarkovChain(sentencesAndWords(for: text))
+
+for word in markovChain {
+    print(word, terminator: " ")
+}
+
+// Prints: "CACTUS EIGHT OH EIGHT TURN LEFT HEADING ONE SEVENTY HEAVY"
+```
+
+### Soundex
+
+Soundex is a classic phonetic coding system
+used to resolve ambiguity in the spelling of surnames.
+This example provides a Swift implementation of the standard algorithm.
+
+```swift
+let names: [String] = [
+    "Washington",
+    "Lee",
+    "Smith",
+    "Smyth"
+]
+
+for name in names {
+    print("\(name): \(soundex(name))")
+}
+// Prints:
+// "Washington: W252"
+// "Lee: L000"
+// "Smith: S530"
+// "Smyth: S530"
+```
+
+### Levenshtein Distance
+
+You can use a string metric like Levenshtein edit distance
+to quantify the similarity between two sequences.
+
+```swift
+/*
+ |     |     |  S  |  a  |  t  |  u  |  r  |  d  |  a  |  y  |
+ |-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+ |     | _0_ |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |
+ |   S |  1  | _0_ | _1_ | _2_ |  3  |  4  |  5  |  6  |  7  |
+ |   u |  2  |  1  |  1  |  2  | _2_ |  3  |  4  |  5  |  6  |
+ |   n |  3  |  2  |  2  |  2  |  3  | _3_ |  4  |  5  |  6  |
+ |   d |  4  |  3  |  3  |  3  |  3  |  4  | _3_ |  4  |  5  |
+ |   a |  5  |  4  |  3  |  4  |  4  |  4  |  4  | _3_ |  4  |
+ |   y |  6  |  5  |  4  |  4  |  5  |  5  |  5  |  4  | _3_ |
+*/
+levenshteinDistance(from: "Saturday", to: "Sunday") // 3
+```
+
+### Spell Checker
+
+Using the Levenshtein distance function from the previous example,
+and combining it with a corpus of frequently-used words,
+you can create a reasonably effective spell checker
+with very little additional code.
+
+```swift
+import Foundation
+
+// https://catalog.ldc.upenn.edu/LDC2006T13
+guard let url = Bundle.main.url(forResource: "LDC2006T13-sample",
+                                withExtension: "txt")
+else {
+    fatalError("Missing required resource")
+}
+
+let spellChecker = try SpellChecker(contentsOf: url)
+
+spellChecker.suggestions(for: "speling")
+// ["spelling", "spewing", "sperling"]
+```
+
 ---
 
 ## License
@@ -554,7 +925,3 @@ or email us at <info@flight.school>.
 [license badge]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [swift version]: https://swift.org/download/
 [swift version badge]: http://img.shields.io/badge/swift%20version-5.0-orange.svg?style=flat
-
-```
-
-```
