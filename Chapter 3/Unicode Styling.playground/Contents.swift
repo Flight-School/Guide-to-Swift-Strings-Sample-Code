@@ -4,6 +4,7 @@
 // https://swift.org/download/#snapshots
 //------------------------------------------------------------------------------
 
+#if canImport(AppKit)
 import AppKit
 
 let name = NSFullUserName()
@@ -12,6 +13,7 @@ Hello, \(name, style: .fraktur(bold: true))!
 """
 
 print(styled)
+#endif
 
 // Equivalent
 /*
