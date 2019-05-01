@@ -3,7 +3,7 @@ osx_image: xcode10.2
 env:
   global:
     - SDK=iphoneos
-    - TARGET=armv7-apple-ios12
+    - TARGET=arm64-apple-ios12.0
   matrix:
     - PLAYGROUND_DIR="Chapter 2/Canonical Equivalence.playground"
     - PLAYGROUND_DIR="Chapter 2/Character Number Values.playground"
