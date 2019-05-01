@@ -1,9 +1,3 @@
-//------------------------------------------------------------------------------
-// This playground requires Swift 5.0 or higher.
-// You can download the latest Swift 5.0 Snapshot here:
-// https://swift.org/download/#snapshots
-//------------------------------------------------------------------------------
-
 let singleLineString = "Welcome aboard!"
 
 let multilineString = """
