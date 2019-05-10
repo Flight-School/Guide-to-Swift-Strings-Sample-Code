@@ -1,4 +1,4 @@
-import Darwin.libc
+import Foundation
 
 public class NaiveBayesClassifier<Category, Feature>
     where Category: Hashable, Feature: Hashable
