@@ -115,9 +115,10 @@ String(format: "%lld", Int.max)
 // Modifiers following floating-point specifiers (a, A, e, E, f, F, g, G)
 // ----------------------------------------------------------------------
 
+#if arch(x86_64) && !os(Windows)
 // L - long double (at least 80 bits in size)
 String(format: "%LF", Float80(6.02214086e23))
-
+#endif
 
 // ================
 // Formatting Flags
