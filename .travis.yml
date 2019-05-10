@@ -54,7 +54,7 @@ env:
     - PLAYGROUND_DIR="Chapter 7/Named Entity Recognition.playground"
     - PLAYGROUND_DIR="Chapter 7/Part of Speech Tagging.playground"
     - PLAYGROUND_DIR="Chapter 7/Sentiment Classification.playground"
-    - PLAYGROUND_DIR="Chapter 7/Sentiment Classifier Model Trainer.playground"
+    # - PLAYGROUND_DIR="Chapter 7/Sentiment Classifier Model Trainer.playground"
     - PLAYGROUND_DIR="Chapter 7/Soundex.playground"
     - PLAYGROUND_DIR="Chapter 7/Spell Checker.playground"
     - PLAYGROUND_DIR="Chapter 7/Tokenization.playground"
