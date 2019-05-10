@@ -18,7 +18,7 @@ tagger.enumerateTags(in: stringRange,
     guard let tag = tag?.rawValue else { return true }
     switch tag {
     case .noun, .placeName:
-        print(tag, String(string[tagRange])))
+        print(tag, String(string[tagRange]))
     default:
         break
     }
