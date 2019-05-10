@@ -41,7 +41,7 @@ env:
     - PLAYGROUND_DIR="Chapter 5/HumanReadable.playground"
     - PLAYGROUND_DIR="Chapter 6/AFTN Regular Expression.playground"
     - PLAYGROUND_DIR="Chapter 6/AFTN Scanner.playground"
-    - PLAYGROUND_DIR="Chapter 6/AFTN/AFTN.playground"
+    # - PLAYGROUND_DIR="Chapter 6/AFTN/AFTN.playground"
     - PLAYGROUND_DIR="Chapter 7/Keyword Extraction.playground"
     - PLAYGROUND_DIR="Chapter 7/Language Recognizer Hints.playground"
     - PLAYGROUND_DIR="Chapter 7/Language Recognizer.playground"
